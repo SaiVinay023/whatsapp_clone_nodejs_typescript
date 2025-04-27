@@ -14,6 +14,8 @@ const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
   cors: {
     origin: '*', // allow all (in dev mode)
+    methods: ['GET', 'POST']
+
   },
 });
 
@@ -30,5 +32,17 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => {
   res.send('WhatsApp Clone API Running 🚀');
 });
+io.on('connection', (socket) => {
+  console.log('🔌 New client connected:', socket.id);
 
+  socket.on('send_message', (data) => {
+    console.log('📩 Message received:', data);
+    // Broadcast message to all clients
+    io.emit('receive_message', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('❌ Client disconnected:', socket.id);
+  });
+});
 export { app, httpServer };

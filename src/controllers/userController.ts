@@ -46,20 +46,19 @@ export function healthCheck(req: Request, res: Response): void {
   res.status(200).json({ success: true, message: "Service is running" });
 }
 
-export const sendMessage = async (req: Request, res: Response) => {
+export const sendMessage = async (req: Request, res: Response): Promise<void> => {
   try {
     const { message } = req.body;
-    const file = req.file; // file will be available here if uploaded
+    const file = req.file;
 
     console.log('Received message:', message);
     if (file) {
       console.log('Received file:', file.originalname);
-      // TODO: Save file to database or cloud
     }
 
-    return res.status(200).json({ message: 'Message sent successfully' });
+    res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json({ error: 'Something went wrong' });
   }
 };
